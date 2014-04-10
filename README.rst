@@ -1,8 +1,11 @@
 tl;dr
 =====
 
-Use ``mime_type: font/ttf`` for static .ttf files in `app.yaml`_
-to benefit from lower bandwidth usage and faster load times.
+Use ``mime_type: font/ttf`` for static `TrueType Font (.ttf)`_ files in the
+``app.yaml`` to benefit from lower bandwidth usage and faster load times.
+This project provides an example_ to use and a detailed procedure_ to test it.
+
+.. _example: https://github.com/mdxs/test-ttf-on-gae/blob/master/main/app.yaml
 
 
 Description
@@ -50,6 +53,8 @@ this test project.
 
 So, thank you ``jchu...@gmail.com`` !
 
+
+.. _procedure:
 
 Procedure
 =========
@@ -351,7 +356,6 @@ the effect. The following changes are provided as examples:
   thus get better averages.
 
 
-.. _app.yaml: https://github.com/mdxs/test-ttf-on-gae/blob/master/main/app.yaml
 .. _comment #3 to issue 6183: https://code.google.com/p/googleappengine/issues/detail?id=6183#c3
 .. _google app engine (gae): https://developers.google.com/appengine/
 .. _google app engine sdk: https://developers.google.com/appengine/downloads
