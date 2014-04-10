@@ -1,7 +1,7 @@
 Do It Yourself (DIY)
 ====================
 
-# Prepare a Virtual Machine (VM)
+#. Prepare a Virtual Machine (VM)
 
   Create a virtual machine (using for example VMware_) and
   install Xubuntu_ 13.10 Desktop i386 into it, for example
@@ -27,14 +27,14 @@ Do It Yourself (DIY)
     - Account: ``test``
     - Password: ``********``
 
-# Boot it up and update/upgrade to the latest packages
+#. Boot it up and update/upgrade to the latest packages
 
   .. code-block:: none
 
     sudo apt-get update
     sudo apt-get upgrade
 
-# Install some developer tools
+#. Install some developer tools
 
   Where ``git`` will be needed to get the project from GitHub,
   the ``apache2-utils`` include ``ab`` which we'll use to measure
@@ -46,7 +46,7 @@ Do It Yourself (DIY)
     sudo apt-get install apache2-utils
     sudo apt-get install python-dev
 
-# Install virtualenvwrapper_ (including pip and virtualenv)
+#. Install virtualenvwrapper_ (including pip and virtualenv)
 
   This will help you protect your configuration, by providing
   an isolated development environment for this test project.
@@ -60,7 +60,7 @@ Do It Yourself (DIY)
     # now upgrade in this order to get latest versions
     sudo pip install virtualenvwrapper --upgrade
 
-# Get a local copy of the `Google App Engine SDK`_ v1.9.2 for Python
+#. Get a local copy of the `Google App Engine SDK`_ v1.9.2 for Python
 
   Modify the version number as needed to the latest release.
 
@@ -71,7 +71,7 @@ Do It Yourself (DIY)
     unzip google_appengine_1.9.2.zip
     mv google_appengine ~/
 
-# Prepare development folders
+#. Prepare development folders
 
   When you opt for a different structure, modify subsequent
   instructions accordingly.
@@ -82,7 +82,7 @@ Do It Yourself (DIY)
     mkdir dev
     mkdir dev/gh
 
-# Get the code and prepare the development environment
+#. Get the code and prepare the development environment
 
   .. code-block:: none
 
@@ -96,7 +96,7 @@ Do It Yourself (DIY)
     echo "export PATH=\$PATH:~/google_appengine:" >> bin/postactivate
     echo "cd ~/dev/gh/test-ttf-on-gae" >> bin/postactivate
 
-# Run the test project on localhost
+#. Run the test project on localhost
 
   .. code-block:: none
 
@@ -105,7 +105,7 @@ Do It Yourself (DIY)
     dev_appserver.py main
     # keep this console window running...
 
-# Start another console window, and check local delivery of static files
+#. Start another console window, and check local delivery of static files
 
   Note that the files thus obtained equal the same files found
   inside ``main/lib/werkzeug/debug/shared/`` folder of the project.
@@ -141,7 +141,7 @@ Do It Yourself (DIY)
   Notice the ``"Document Length: 70220 bytes"`` in the output, which
   equals the ``"du -b"`` output seen above... it is *not* compressed locally.
   
-# Modify application to run on the Google App Engine (GAE) servers
+#. Modify application to run on the Google App Engine (GAE) servers
 
   Create your test application using the form
   on https://appengine.google.com/start/createapp
@@ -156,7 +156,7 @@ Do It Yourself (DIY)
   Modify the ``application: test-ttf-on-gae`` line in ``main/app.yaml``
   to use the *App ID* just created.
 
-# Upload the appliction to GAE servers
+#. Upload the appliction to GAE servers
 
   Note that you may need to authenticate and authorize (typically in
   a browser instance) when executing the following for the first time.
@@ -167,7 +167,7 @@ Do It Yourself (DIY)
     appcfg.py --oauth2 update main
     # Note that you may need to authenticate and authorize
 
-# Check delivery of static files from GAE servers
+#. Check delivery of static files from GAE servers
 
   Finally we reach the point in which we can prove that static ``.ttf`` files
   can be compressed when hosted by the Google App Engine (GAE) servers.
