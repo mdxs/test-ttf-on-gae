@@ -1,6 +1,7 @@
 
 *.pyc
 *.pyo
+*.kate-swp
 .DS_Store
 .git*
 temp/
