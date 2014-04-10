@@ -54,6 +54,11 @@ this test project.
 
 So, thank you ``jchu...@gmail.com`` !
 
+Furthermore, most of the source code and files in this project are from
+Google's `getting-started-with-flask`_ example. Therefore, their `LICENSE`_
+applies to the source code of this project (unless specified otherwise,
+as is the case for the "ubuntu.ttf" file which has a different `FONT_LICENSE`_).
+
 
 .. _procedure:
 
@@ -366,9 +371,12 @@ the effect. The following changes are provided as examples:
 
 
 .. _comment #3 to issue 6183: https://code.google.com/p/googleappengine/issues/detail?id=6183#c3
+.. _font_license: https://github.com/mdxs/test-ttf-on-gae/blob/master/main/static/FONT_LICENSE
+.. _getting-started-with-flask: https://developers.google.com/appengine/docs/python/getting-started-with-flask
 .. _google app engine (gae): https://developers.google.com/appengine/
 .. _google app engine sdk: https://developers.google.com/appengine/downloads
 .. _issue 6183: https://code.google.com/p/googleappengine/issues/detail?id=6183
+.. _license: https://github.com/mdxs/test-ttf-on-gae/blob/master/LICENSE
 .. _mime type: http://en.wikipedia.org/wiki/Mime_type
 .. _truetype font (.ttf): http://en.wikipedia.org/wiki/TrueType
 .. _virtualenvwrapper: http://virtualenvwrapper.readthedocs.org/en/latest/
