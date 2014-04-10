@@ -42,7 +42,8 @@ Disclaimer
 **BEWARE**: These findings are subject to change; as this appears to be
 an implementation detail of the GAE servers. Your milage may vary, which
 is why this project provides a detailed procedure; so that you can check
-this yourself.
+this yourself. Status: at the time of writing, 10 April 2014, information
+provided here is still valid (and it also was in 2013-Q4).
 
 
 Credits
