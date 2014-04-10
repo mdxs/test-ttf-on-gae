@@ -205,6 +205,96 @@ Also note the ``"Total transferred:"`` bytes for comparison with further
 testing, indicating total bytes transferred in the whole process.
 
 
+Experiment
+==========
+
+Change the ``main/app.yaml`` file and repeat steps 9 and 10 above to see
+the effect. The following changes are provided as examples:
+
+- Comment out the special case handling for ``.ttf`` files:
+
+  .. code-block:: none
+  
+    ...
+
+    handlers:
+    ## Special case for .ttf files needing specific mime_type
+    ## to enjoy gzip encoding/compression from GAE hosting.
+    ## Order is important: this must precede "/p/" static_dir
+    # - url: /p/(.*\.ttf)
+    #   static_files: static/\1
+    #   upload: static/(.*\.ttf)
+    #   mime_type: font/ttf
+    #   expiration: 1000d
+
+    - url: /p/
+      static_dir: static/
+      expiration: 1000d
+
+    - url: /.*
+      script: main.app
+    ...
+
+  You probably notice some *"Could not guess mimetype warnings for .ttf files"*
+  warnings/notifications while uploading. Though perhaps some Operating Systems
+  detect and provide a mime type to the ``appcfg.py`` process; as some Mac OS
+  users reported they didn't see these messages.
+
+  I have seen for example the following:
+  
+  .. code-block:: none
+  
+    ...
+    04:27 PM Scanning files on local disk.
+    Could not guess mimetype for static/FONT_LICENSE.  Using application/octet-stream.
+    Could not guess mimetype for static/ubuntu.ttf.  Using application/octet-stream.
+    Could not guess mimetype for static/FONT_LICENSE.  Using application/octet-stream.
+    Could not guess mimetype for static/ubuntu.ttf.  Using application/octet-stream.
+    04:27 PM Cloning 2 static files.
+    ...
+
+  Which doesn't seem to hinder the actual deployment.
+  
+  It does affect the result of step 10 above though, dropping any compression by
+  the GAE servers: with ``ab`` showing ``"Document Length: 70220 bytes"`` and a
+  much higher ``"Total transferred:"`` bytes count for the ``ubuntu.ttf`` file.
+
+- Use another mime type for ``.ttf`` files:
+
+  .. code-block:: none
+  
+    ...
+    handlers:
+    # Special case for .ttf files needing specific mime_type
+    # to enjoy gzip encoding/compression from GAE hosting.
+    # Order is important: this must precede "/p/" static_dir
+    - url: /p/(.*\.ttf)
+      static_files: static/\1
+      upload: static/(.*\.ttf)
+      mime_type: font/x-font-ttf
+      expiration: 1000d
+
+    - url: /p/
+      static_dir: static/
+      expiration: 1000d
+
+    - url: /.*
+      script: main.app
+    ...
+
+  Which will use ``font/x-font-ttf`` for the  ``ubuntu.ttf`` file, suppressing
+  the related warnings in the upload. But also (silently) dropping the compression
+  by GAE servers (as you can see in the ``ab`` output when repeating step 10).
+
+  .. code-block:: none
+  
+    wget -S http://YOUR-APP-ID.appspot.com/p/ubuntu.ttf
+    
+  Will show you that it is using ``Content-Type: font/x-font-ttf`` and that
+  there are more differences compared to a ``wget`` when using ``font/ttf``
+  is being used (most notably the transfer rate and "Transfer-Encoding").
+
+  
 .. _google app engine sdk: https://developers.google.com/appengine/downloads
 .. _virtualenvwrapper: http://virtualenvwrapper.readthedocs.org/en/latest/
 .. _vmware: https://www.vmware.com/products/
