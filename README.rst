@@ -11,10 +11,10 @@ This project provides an example_ to use and a detailed procedure_ to test it.
 Description
 ===========
 
-Project to test the current `Google App Engine (GAE)`_ server implementation
-when handling static `TrueType Font (.ttf)`_ files. The default approach of
-the SDK, to declare such files as ``application/octet-stream`` on upload,
-may not provide the best results for app owners and users.
+Python based project to test the current `Google App Engine (GAE)`_ server
+implementation when handling static `TrueType Font (.ttf)`_ files. The default
+approach of the SDK, to declare such files as ``application/octet-stream``
+on upload, may not provide the best results for app owners and users.
 
 It appears that an explicit declaration of the `mime type`_ for .ttf files
 as ``font/ttf`` can reduce bandwidth usage (for the app owner) and decrease
@@ -26,7 +26,7 @@ while uploading your application using the Python SDK based ``appcfg.py``
 tool (at least on some platforms, as reported in `Issue 6183`_).
 
 While other mime types for .ttf are suggested on the internet, testing
-shows that **only** ``mime_type: font/ttf`` in the ``app.yaml`` will
+shows that **only** using ``mime_type: font/ttf`` in the ``app.yaml`` will
 produce the gains in bandwidth usage and load times.
 
 Interestingly enough, mime types starting with ``font/`` are not even
@@ -62,14 +62,14 @@ Procedure
 1. Prepare a Virtual Machine (VM)
 ---------------------------------
 
-Create a virtual machine (using for example VMware_) and
-install Xubuntu_ 13.10 Desktop i386 into it, for example
-using a downloaded ``xubuntu-13.10-desktop-i386.iso`` file
+Create a virtual machine (for example with VMware_)
+and install Xubuntu_ 13.10 Desktop i386 into it, using a
+downloaded ``xubuntu-13.10-desktop-i386.iso`` file
 as installation media and the following parameters:
 
 - Name: ``test``
 
-- With the following virtual hardware:
+- With the following virtual hardware suggested:
 
   - Memory: 1024 MB
   - Virtual Processors: 1
@@ -97,8 +97,8 @@ Boot it up and update/upgrade to the latest packages:
 -------------------------------
 
 Where ``git`` will be needed to get the project from GitHub,
-the ``apache2-utils`` include ``ab`` which we'll use to measure
-throughput; and ``python-dev`` helps in our Python development.
+the ``apache2-utils`` include ``ab`` which is used to measure;
+and ``python-dev`` helps in the Python development environment.
 
 .. code-block:: none
 
@@ -119,7 +119,11 @@ development environment for this test project.
   # note that use on Xubuntu (Debian) is slightly different
   # as compared to the docs... it is even easier for Xubuntu
   less /usr/share/doc/virtualenvwrapper/README.Debian
-  # now upgrade in this order to get latest versions
+
+And upgrade it (in this order), to get latest versions.
+
+.. code-block:: none
+  
   sudo pip install virtualenvwrapper --upgrade
 
 4. Get the `Google App Engine SDK`_ for Python
@@ -237,7 +241,6 @@ a browser instance) when executing the following for the first time.
 
   workon test-ttf-on-gae
   appcfg.py --oauth2 update main
-  # Note that you may need to authenticate and authorize
 
 10. Check compression by GAE servers
 ------------------------------------
@@ -263,8 +266,8 @@ Also note the ``"Total transferred:"`` bytes for comparison with further
 testing, indicating total bytes transferred in the whole process.
 
 
-Experiment
-==========
+Experiments
+===========
 
 Change the ``main/app.yaml`` file and repeat steps 9 and 10 above to see
 the effect. The following changes are provided as examples:
@@ -328,7 +331,7 @@ the effect. The following changes are provided as examples:
     - url: /p/(.*\.ttf)
       static_files: static/\1
       upload: static/(.*\.ttf)
-      mime_type: font/x-font-ttf
+      mime_type: application/x-font-ttf
       expiration: 1000d
 
     - url: /p/
@@ -339,17 +342,22 @@ the effect. The following changes are provided as examples:
       script: main.app
     ...
 
-  Which will use ``font/x-font-ttf`` for the  ``ubuntu.ttf`` file, suppressing
-  the related warnings in the upload. But also (silently) dropping the compression
-  by GAE servers (as you can see in the ``ab`` output when repeating step 10).
+  Which will use ``application/x-font-ttf`` for the  ``ubuntu.ttf`` file,
+  suppressing the related warnings in the upload. But also (silently) dropping
+  the compression by GAE servers (as you can see in the ``ab`` output when
+  repeating step 10).
 
   .. code-block:: none
   
     wget -S http://YOUR-APP-ID.appspot.com/p/ubuntu.ttf
     
-  Will show you that it is using ``Content-Type: font/x-font-ttf`` and that
-  there are more differences compared to a ``wget`` when using ``font/ttf``
+  Will show you that it is using ``Content-Type: application/x-font-ttf`` and
+  that there are more differences compared to a ``wget`` when using ``font/ttf``
   is being used (most notably the transfer rate and "Transfer-Encoding").
+
+- Feel free to also try other variations, such as: "font/x-font-ttf",
+  "font/truetype", "application/x-font-truetype", 
+  
 
 - In step 10, you can also try modifying the ``ab`` command to ``ab -n 100 ...``
   and ``ab -n 100 -c 10 ...`` (for concurrency) to perform more request; and
