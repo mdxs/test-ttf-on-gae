@@ -28,15 +28,14 @@ as installation media and the following parameters:
   - Account: ``test``
   - Password: ``********``
 
-2. Boot it up and update/upgrade to the latest packages
--------------------------------------------------------
+Boot it up and update/upgrade to the latest packages:
 
 .. code-block:: none
 
   sudo apt-get update
   sudo apt-get upgrade
 
-4. Install some developer tools
+2. Install some developer tools
 -------------------------------
 
 Where ``git`` will be needed to get the project from GitHub,
@@ -49,11 +48,12 @@ throughput; and ``python-dev`` helps in our Python development.
   sudo apt-get install apache2-utils
   sudo apt-get install python-dev
 
-5. Install virtualenvwrapper_ (including pip and virtualenv)
-------------------------------------------------------------
+3. Install virtualenvwrapper_
+-----------------------------
 
-This will help you protect your configuration, by providing
-an isolated development environment for this test project.
+This includes ``pip`` and ``virtualenv``, which together will
+help you protect your configuration, by providing an isolated
+development environment for this test project.
 
 .. code-block:: none
 
@@ -64,8 +64,8 @@ an isolated development environment for this test project.
   # now upgrade in this order to get latest versions
   sudo pip install virtualenvwrapper --upgrade
 
-6. Get a local copy of the `Google App Engine SDK`_ for Python
---------------------------------------------------------------
+4. Get the `Google App Engine SDK`_ for Python
+----------------------------------------------
 
 Modify the version number as needed to the latest release.
 
@@ -76,7 +76,7 @@ Modify the version number as needed to the latest release.
   unzip google_appengine_1.9.2.zip
   mv google_appengine ~/
 
-7. Prepare development folders
+5. Prepare development folders
 ------------------------------
 
 When you opt for a different structure, modify subsequent
@@ -88,8 +88,10 @@ instructions accordingly.
   mkdir dev
   mkdir dev/gh
 
-8. Get the code and prepare the development environment
--------------------------------------------------------
+6. Get the test project
+-----------------------
+
+Obtain the code and prepare the development environment.
 
 .. code-block:: none
 
@@ -103,7 +105,7 @@ instructions accordingly.
   echo "export PATH=\$PATH:~/google_appengine:" >> bin/postactivate
   echo "cd ~/dev/gh/test-ttf-on-gae" >> bin/postactivate
 
-9. Run the test project on localhost
+7. Run the test project on localhost
 ------------------------------------
 
 Use one console window to run your app in the development web server:
@@ -151,10 +153,10 @@ compressed content from the server:
 Notice the ``"Document Length: 70220 bytes"`` in the output, which
 equals the ``"du -b"`` output seen above... it is *not* compressed locally.
   
-10. Modify application to run on the Google App Engine (GAE) servers
---------------------------------------------------------------------
+8. Modify application to run on GAE servers
+-------------------------------------------
 
-Create your test application using the form
+First create your new test application using the form
 on https://appengine.google.com/start/createapp
 
 Note in particular the *"Application Identifier"* (further: *App ID*)
@@ -167,8 +169,8 @@ is deleted later, it cannot be taken for a new application.
 Modify the ``application: test-ttf-on-gae`` line in ``main/app.yaml``
 to use the *App ID* just created.
 
-11. Upload the appliction to GAE servers
-----------------------------------------
+9. Upload the appliction to GAE servers
+---------------------------------------
 
 Note that you may need to authenticate and authorize (typically in
 a browser instance) when executing the following for the first time.
@@ -179,8 +181,8 @@ a browser instance) when executing the following for the first time.
   appcfg.py --oauth2 update main
   # Note that you may need to authenticate and authorize
 
-12. Check delivery of static files from GAE servers
----------------------------------------------------
+10. Check compression by GAE servers
+------------------------------------
 
 Finally we reach the point in which we can prove that static ``.ttf`` files
 can be compressed when hosted by the Google App Engine (GAE) servers.
@@ -201,7 +203,6 @@ the actual file; obviously due to compression by the GAE servers.
 
 Also note the ``"Total transferred:"`` bytes for comparison with further
 testing, indicating total bytes transferred in the whole process.
-
 
 
 .. _google app engine sdk: https://developers.google.com/appengine/downloads
