@@ -1,5 +1,47 @@
-Do It Yourself (DIY)
-====================
+Project to test the current Google App Engine (GAE) server implementation
+when handling static TrueType Font (.ttf) files. The default approach of
+the SDK, to declare such files as ``application/octet-stream`` on upload,
+may not provide the best results for app owners and users.
+
+It appears that an explicit declaration of the `mime type`_ for .ttf files
+as ``font/ttf`` can reduce bandwidth usage (for the app owner) and decrease
+load times (for users). With this mime type, and only this mime type it
+seems, will app engine use gzip compression on .ttf files.
+
+Doing so also addresses *"Could not guess mimetype for .ttf files"* warnings
+while uploading your application using the ``appcfg.py`` tool from the GAE
+SDK for Python (at least on some platforms, as reported in `Issue 6183`_).
+
+While other mime types for .ttf are suggested on the internet, testing
+shows that **only** ``mime_type: font/ttf`` in the ``app.yaml`` will
+produce the gains in bandwidth usage and load times.
+
+Interestingly enough, mime types starting with ``font/`` are not even
+technically valid, while ``application/x-*`` is the valid format for
+non-standard mime types (as fonts have no standard). [1]_
+
+
+.. [1] `Comment #3 to Issue 6183`_ by ``jchu...@gmail.com``
+
+
+Disclaimer
+==========
+
+**BEWARE**: These findings are subject to change; as this appears to be
+an implementation detail of the GAE servers. Your milage may vary, which
+is why this project provides a detailed procedure that empowers you to
+check this yourself.
+
+
+Credits
+=======
+
+See comment #3 to Issue 6183 [1]_ for the very clear hint that helped develop
+this test project. So: thank you ``jchu...@gmail.com``!
+
+
+Procedure
+=========
 
 1. Prepare a Virtual Machine (VM)
 ---------------------------------
@@ -143,7 +185,7 @@ compressed content from the server:
 .. code-block:: none
 
   cd ~/temp
-  ab -n 5 \
+  ab -n 1 \
     -H "User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:26.0) Gecko/20100101 Firefox/26.0" \
     -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
     -H "Accept-Language: en-US,en;q=0.5" \
@@ -190,7 +232,7 @@ can be compressed when hosted by the Google App Engine (GAE) servers.
 .. code-block:: none
 
   cd ~/temp
-  ab -n 5 \
+  ab -n 1 \
     -H "User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:26.0) Gecko/20100101 Firefox/26.0" \
     -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
     -H "Accept-Language: en-US,en;q=0.5" \
@@ -216,7 +258,6 @@ the effect. The following changes are provided as examples:
   .. code-block:: none
   
     ...
-
     handlers:
     ## Special case for .ttf files needing specific mime_type
     ## to enjoy gzip encoding/compression from GAE hosting.
@@ -237,7 +278,7 @@ the effect. The following changes are provided as examples:
 
   You probably notice some *"Could not guess mimetype warnings for .ttf files"*
   warnings/notifications while uploading. Though perhaps some Operating Systems
-  detect and provide a mime type to the ``appcfg.py`` process; as some Mac OS
+  detect and provide a mime type to the ``appcfg.py`` process; as some Mac OS X
   users reported they didn't see these messages.
 
   I have seen for example the following:
@@ -294,8 +335,15 @@ the effect. The following changes are provided as examples:
   there are more differences compared to a ``wget`` when using ``font/ttf``
   is being used (most notably the transfer rate and "Transfer-Encoding").
 
-  
+- In step 10, you can also try modifying the ``ab`` command to ``ab -n 100 ...``
+  and ``ab -n 100 -c 10 ...`` (for concurrency) to perform more request; and
+  thus get better averages.
+
+
+.. _comment #3 to issue 6183: https://code.google.com/p/googleappengine/issues/detail?id=6183#c3
 .. _google app engine sdk: https://developers.google.com/appengine/downloads
+.. _issue 6183: https://code.google.com/p/googleappengine/issues/detail?id=6183
+.. _mime type: http://en.wikipedia.org/wiki/Mime_type
 .. _virtualenvwrapper: http://virtualenvwrapper.readthedocs.org/en/latest/
 .. _vmware: https://www.vmware.com/products/
 .. _xubuntu: http://xubuntu.org/getxubuntu/
