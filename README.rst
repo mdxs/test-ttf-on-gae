@@ -1,11 +1,11 @@
 Do It Yourself (DIY)
 ====================
 
-- Prepare a Virtual Machine (VM):
+- Prepare a Virtual Machine (VM)
 
-  Create a virtual machine (using for example VMware) and
-  install Xubuntu 13.10 Desktop i386 into it, for example
-  using a downloaded `xubuntu-13.10-desktop-i386.iso` file
+  Create a virtual machine (using for example VMware_) and
+  install Xubuntu_ 13.10 Desktop i386 into it, for example
+  using a downloaded ``xubuntu-13.10-desktop-i386.iso`` file
   as installation media and the following parameters:
 
   - Name: ``test``
@@ -27,7 +27,7 @@ Do It Yourself (DIY)
     - Account: ``test``
     - Password: ``********``
 
-- Boot it up and update / upgrade to latest packages
+- Boot it up and update/upgrade to the latest packages
 
   .. code-block:: none
 
@@ -37,8 +37,8 @@ Do It Yourself (DIY)
 - Install some developer tools
 
   Where ``git`` will be needed to get the project from GitHub,
-  the ``apache2-utils`` include `ab` which we'll use to measure;
-  and the ``python-dev`` tools help in our Python development.
+  the ``apache2-utils`` include ``ab`` which we'll use to measure
+  throughput; and ``python-dev`` helps in our Python development.
 
   .. code-block:: none
 
@@ -46,7 +46,10 @@ Do It Yourself (DIY)
     sudo apt-get install apache2-utils
     sudo apt-get install python-dev
 
-- Install virtualenvwrapper (including pip and virtualenv)
+- Install virtualenvwrapper_ (including pip and virtualenv)
+
+  This will help you protect your configuration, by providing
+  an isolated development environment for this test project.
 
   .. code-block:: none
 
@@ -57,7 +60,9 @@ Do It Yourself (DIY)
     # now upgrade in this order to get latest versions
     sudo pip install virtualenvwrapper --upgrade
 
-- Get a local copy of the Google App Engine SDK v1.9.2 for Python
+- Get a local copy of the `Google App Engine SDK`_ v1.9.2 for Python
+
+  Modify the version number as needed to the latest release.
 
   .. code-block:: none
 
@@ -67,6 +72,9 @@ Do It Yourself (DIY)
     mv google_appengine ~/
 
 - Prepare development folders
+
+  When you opt for a different structure, modify subsequent
+  instructions accordingly.
 
   .. code-block:: none
 
@@ -109,44 +117,81 @@ Do It Yourself (DIY)
     cd temp
     wget -S http://localhost:8080/p/FONT_LICENSE
     wget -S http://localhost:8080/p/ubuntu.ttf
+    du -b ubuntu.ttf
+    # probably returns: "70220   ubuntu.ttf"
+
+  So far, this was to prepare the test project and to check that it
+  works locally; using the development application server... Which
+  will *not* attempt to compress any files.
+  
+  You can confirm this using ``ab``, which should be provided some
+  parameters to present itself as a browser/client that will accept
+  compressed content from the server:
+
+  .. code-block:: none
+
+    cd ~/temp
+    ab -n 5 \
+      -H "User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:26.0) Gecko/20100101 Firefox/26.0" \
+      -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
+      -H "Accept-Language: en-US,en;q=0.5" \
+      -H "Accept-Encoding: gzip, deflate" \
+      http://localhost:8080/p/ubuntu.ttf
+
+  Notice the "Document Length: 70220 bytes" in the output, which
+  equals the "du -b" output seen above... it is *not* compressed locally.
+  
+- Modify application to run on the Google App Engine (GAE) servers
+
+  Create your test application using the form
+  on https://appengine.google.com/start/createapp
+  
+  Note in particular the *"Application Identifier"* (further: *App ID*)
+  which will need to be unique; and you may want to use something with
+  a *"test"* pre- or postfix to avoid spoiling good identifiers...
+  
+  **BEWARE:** Once an *App ID* is reserved, regardless of whether the app
+  is deleted later, it cannot be taken for a new application.
+
+  Modify the ``application: test-ttf-on-gae`` line in ``main/app.yaml``
+  to use the *App ID* just created.
+
+- Upload the appliction to GAE servers
+
+  Note that you may need to authenticate and authorize (typically in
+  a browser instance) when executing the following for the first time.
+
+  .. code-block:: none
+
+    workon test-ttf-on-gae
+    appcfg.py --oauth2 update main
+    # Note that you may need to authenticate and authorize
+
+- Check delivery of static files from GAE servers
+
+  Finally we reach the point in which we can prove that static ``.ttf`` files
+  can be compressed when hosted by the Google App Engine (GAE) servers.
+  
+  .. code-block:: none
+
+    cd ~/temp
+    ab -n 5 \
+      -H "User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:26.0) Gecko/20100101 Firefox/26.0" \
+      -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
+      -H "Accept-Language: en-US,en;q=0.5" \
+      -H "Accept-Encoding: gzip, deflate" \
+      http://YOUR-APP-ID.appspot.com/p/ubuntu.ttf
+
+  Notice the ``"Document Length: 42567 bytes"`` in the output, which is
+  **almost 40% smaller** (namely 70220 - 42567 = 27653 bytes smaller) than
+  the actual file; obviously due to compression by the GAE servers.
+  
+  Also note the ``"Total transferred:"`` bytes for comparison with further
+  testing, indicating total bytes transferred in the whole process.
 
 
 
-
-
-Create your test application using the form on https://appengine.google.com/start/createapp
-
-Note in particular the "Application Identifier" (further: App ID) which will need to be unique;
-and you may want to use something with a "test" pre- or postfix to avoid spoiling
-good identifiers... BEWARE: Once an App ID is reserved, regardless of whether the app is deleted,
-it cannot be taken for a new application.
-
-Modify the "application: test-ttf-on-gae" in "main/app.yaml" to use the App ID just created.
-
-
-appcfg.py --oauth2 update main
-# You may need to authenticate and authorize
-
-cd ~
-mkdir tst
-cd ~/tst
-wget -S http://YOUR-APP-ID.appspot.com/p/FONT_LICENSE
-wget -S http://YOUR-APP-ID.appspot.com/p/ubuntu.ttf
-
-
-ab -n 5 \
-  -H "User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:26.0) Gecko/20100101 Firefox/26.0" \
-  -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
-  -H "Accept-Language: en-US,en;q=0.5" \
-  -H "Accept-Encoding: gzip, deflate" \
-  http://YOUR-APP-ID.appspot.com/p/ubuntu.ttf
-
-ab -n 5 \
-  -H "User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:26.0) Gecko/20100101 Firefox/26.0" \
-  -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
-  -H "Accept-Language: en-US,en;q=0.5" \
-  -H "Accept-Encoding: gzip, deflate" \
-  http://test-ttf-on-gae.appspot.com/p/ubuntu.ttf
-
-
-
+.. _google app engine sdk: https://developers.google.com/appengine/downloads
+.. _virtualenvwrapper: http://virtualenvwrapper.readthedocs.org/en/latest/
+.. _vmware: https://www.vmware.com/products/
+.. _xubuntu: http://xubuntu.org/getxubuntu/
