@@ -1,16 +1,26 @@
-Project to test the current Google App Engine (GAE) server implementation
-when handling static TrueType Font (.ttf) files. The default approach of
+tl;dr
+=====
+
+Use ``mime_type: font/ttf`` for static .ttf files in `app.yaml`_
+to benefit from lower bandwidth usage and faster load times.
+
+
+Description
+===========
+
+Project to test the current `Google App Engine (GAE)`_ server implementation
+when handling static `TrueType Font (.ttf)`_ files. The default approach of
 the SDK, to declare such files as ``application/octet-stream`` on upload,
 may not provide the best results for app owners and users.
 
 It appears that an explicit declaration of the `mime type`_ for .ttf files
 as ``font/ttf`` can reduce bandwidth usage (for the app owner) and decrease
 load times (for users). With this mime type, and only this mime type it
-seems, will app engine use gzip compression on .ttf files.
+seems, the GAE *will* use gzip compression on .ttf files.
 
 Doing so also addresses *"Could not guess mimetype for .ttf files"* warnings
-while uploading your application using the ``appcfg.py`` tool from the GAE
-SDK for Python (at least on some platforms, as reported in `Issue 6183`_).
+while uploading your application using the Python SDK based ``appcfg.py``
+tool (at least on some platforms, as reported in `Issue 6183`_).
 
 While other mime types for .ttf are suggested on the internet, testing
 shows that **only** ``mime_type: font/ttf`` in the ``app.yaml`` will
@@ -20,7 +30,6 @@ Interestingly enough, mime types starting with ``font/`` are not even
 technically valid, while ``application/x-*`` is the valid format for
 non-standard mime types (as fonts have no standard). [1]_
 
-
 .. [1] `Comment #3 to Issue 6183`_ by ``jchu...@gmail.com``
 
 
@@ -29,15 +38,17 @@ Disclaimer
 
 **BEWARE**: These findings are subject to change; as this appears to be
 an implementation detail of the GAE servers. Your milage may vary, which
-is why this project provides a detailed procedure that empowers you to
-check this yourself.
+is why this project provides a detailed procedure; so that you can check
+this yourself.
 
 
 Credits
 =======
 
-See comment #3 to Issue 6183 [1]_ for the very clear hint that helped develop
-this test project. So: thank you ``jchu...@gmail.com``!
+See `comment #3 to Issue 6183`_ for the very clear hint that helped develop
+this test project.
+
+So, thank you ``jchu...@gmail.com`` !
 
 
 Procedure
@@ -340,10 +351,13 @@ the effect. The following changes are provided as examples:
   thus get better averages.
 
 
+.. _app.yaml: https://github.com/mdxs/test-ttf-on-gae/blob/master/main/app.yaml
 .. _comment #3 to issue 6183: https://code.google.com/p/googleappengine/issues/detail?id=6183#c3
+.. _google app engine (gae): https://developers.google.com/appengine/
 .. _google app engine sdk: https://developers.google.com/appengine/downloads
 .. _issue 6183: https://code.google.com/p/googleappengine/issues/detail?id=6183
 .. _mime type: http://en.wikipedia.org/wiki/Mime_type
+.. _truetype font (.ttf): http://en.wikipedia.org/wiki/TrueType
 .. _virtualenvwrapper: http://virtualenvwrapper.readthedocs.org/en/latest/
 .. _vmware: https://www.vmware.com/products/
 .. _xubuntu: http://xubuntu.org/getxubuntu/
