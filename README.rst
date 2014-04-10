@@ -357,7 +357,7 @@ the effect. The following changes are provided as examples:
   is being used (most notably the transfer rate and "Transfer-Encoding").
 
 - Feel free to also try other variations, such as: "font/x-font-ttf",
-  "font/truetype", "application/x-font-truetype", 
+  "font/truetype", and "application/x-font-truetype".
   
 
 - In step 10, you can also try modifying the ``ab`` command to ``ab -n 100 ...``
